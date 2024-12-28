@@ -5,9 +5,29 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
-
+import { useState } from "react"; 
+import axios from "axios";
 
 export function SignIn() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    try {
+      const response = await axios.post('http://your-backend-url/config.php', {
+        email,
+        password,
+      });
+      
+      setMessage(response.data);
+    } catch (error) {
+      console.error('Error:', error);
+      setMessage('An error occurred.');
+    }
+  };
   return (
     <section className="m-8 flex gap-4">
       <div className="w-full lg:w-3/5 mt-24">
