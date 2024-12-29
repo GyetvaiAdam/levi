@@ -5,9 +5,55 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
-
+import { useState } from "react"; 
+import axios from "axios";
 
 export function SignUp() {
+  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+
+  const formik = useFormik({
+    initialValues: {
+      customerName: "",
+      customerEmail: "",
+      customerPassword: "",
+      customerPasswordAgain: "",
+    },
+    onSubmit: (values, { resetForm }) => {
+      const emailRegex = /^[\w-.]+@([\w-]+.)+[\w-]{2,4}$/g;
+      const emailCorrect = emailRegex.test(values.customerEmail);
+      const nameCorrect = values.customerName.length > 0;
+      const passwordCorrect = values.customerPassword.length > 0 && values.customerPassword === values.customerPasswordAgain;
+
+      if (!emailCorrect) {
+        console.log("Email hiba");
+      } else if (!nameCorrect) {
+        console.log("Név hiba");
+      } else if (!passwordCorrect) {
+        console.log("Jelszó hiba");
+      } else {
+        axios({
+          method: "post",
+          url: "http://your-backend-url/signup.php",
+          data: {
+            customerName: values.customerName,
+            customerEmail: values.customerEmail,
+            customerPassword: values.customerPassword,
+          },
+        })
+        .then(function (response) {
+          resetForm();
+          console.log(response.data);
+          setTimeout(() => {
+            navigate("/customers/login");
+          }, 2000); // Adjust the delay as needed
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
+      }
+    },
+  });
   return (
     <section className="m-8 flex">
             <div className="w-2/5 h-full hidden lg:block">
@@ -82,3 +128,4 @@ export function SignUp() {
 }
 
 export default SignUp;
+
