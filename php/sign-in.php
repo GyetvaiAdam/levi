@@ -1,34 +1,36 @@
 <?php
-header('Content-Type: application/json');
+    header("Access-Control-Allow-Origin: *");
+    header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+    header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 
+    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+        http_response_code(200);
+        exit();
+    }
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "16personalities";
+    $rawData = file_get_contents("php://input");
+    $data = json_decode($rawData, true);
 
+    $conn = mysqli_connect("localhost", "root", "", "16szemelyiseg");
+    $email = $data["email"];
+    $password = $data["password"];
 
-$conn = new mysqli($servername, $username, $password, $dbname);
+    $sql = "SELECT `user_password` FROM `felhasznalok_adatai` WHERE `user_email` = '$email'";
+    $result = mysqli_query($conn, $sql);
+    $row = mysqli_fetch_assoc($result);
 
+    if ($row && password_verify($password, $row['user_password'])) {
+        echo json_encode([
+            "status" => "success",
+            "message" => "Login successful.",
+            "email" => $email,
+        ]);
+    } else {
+        echo json_encode([
+            "status" => "error",
+            "message" => "Invalid email or password.",
+        ]);
+    }
 
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-
-$data = json_decode(file_get_contents('php://input'), true);
-$email = $conn->real_escape_string($data['email']);
-$password = $conn->real_escape_string($data['password']);
-
-
-$sql = "SELECT * FROM users WHERE email='$email' AND password='$password'";
-$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-    echo json_encode("Sign in successful.");
-} else {
-    echo json_encode("Invalid email or password.");
-}
-
-$conn->close();
+    mysqli_close($conn);
 ?>

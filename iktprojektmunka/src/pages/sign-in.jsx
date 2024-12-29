@@ -4,30 +4,31 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react"; 
 import axios from "axios";
 
 export function SignIn() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    try {
-      const response = await axios.post('http://your-backend-url/config.php', {
-        email,
-        password,
+  function elkuld() {
+    axios({
+      method: "get",
+      url: "http://localhost/levi/php/sign-in.php",
+      data: {
+        email: document.getElementById("email").value,
+        password: document.getElementById("password").value,
+      }
+    })
+      .then(function (response) {
+        setTimeout(() => {
+          navigate("/home");
+        }, 2000);
+      })
+      .catch(function (error) {
+        console.log(error);
       });
-      
-      setMessage(response.data);
-    } catch (error) {
-      console.error('Error:', error);
-      setMessage('An error occurred.');
-    }
-  };
+  }
   return (
     <section className="m-8 flex gap-4">
       <div className="w-full lg:w-3/5 mt-24">
@@ -40,7 +41,7 @@ export function SignIn() {
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
               Your email
             </Typography>
-            <Input
+            <Input id="email"
               size="lg"
               placeholder="name@mail.com"
               className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
@@ -51,7 +52,7 @@ export function SignIn() {
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
               Password
             </Typography>
-            <Input
+            <Input id="password"
               type="password"
               size="lg"
               placeholder="********"
@@ -79,7 +80,7 @@ export function SignIn() {
             }
             containerProps={{ className: "-ml-2.5" }}
           />
-          <Button className="mt-6" fullWidth>
+          <Button className="mt-6" fullWidth onClick={elkuld}>
             Sign In
           </Button>
 

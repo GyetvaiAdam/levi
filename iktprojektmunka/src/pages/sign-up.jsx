@@ -4,56 +4,31 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
-import { Link } from "react-router-dom";
-import { useState } from "react"; 
-import axios from "axios";
+import { Link, useNavigate  } from "react-router-dom";
+import axios from 'axios'
+
 
 export function SignUp() {
   const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState(false);
-
-  const formik = useFormik({
-    initialValues: {
-      customerName: "",
-      customerEmail: "",
-      customerPassword: "",
-      customerPasswordAgain: "",
-    },
-    onSubmit: (values, { resetForm }) => {
-      const emailRegex = /^[\w-.]+@([\w-]+.)+[\w-]{2,4}$/g;
-      const emailCorrect = emailRegex.test(values.customerEmail);
-      const nameCorrect = values.customerName.length > 0;
-      const passwordCorrect = values.customerPassword.length > 0 && values.customerPassword === values.customerPasswordAgain;
-
-      if (!emailCorrect) {
-        console.log("Email hiba");
-      } else if (!nameCorrect) {
-        console.log("Név hiba");
-      } else if (!passwordCorrect) {
-        console.log("Jelszó hiba");
-      } else {
-        axios({
-          method: "post",
-          url: "http://your-backend-url/signup.php",
-          data: {
-            customerName: values.customerName,
-            customerEmail: values.customerEmail,
-            customerPassword: values.customerPassword,
-          },
-        })
-        .then(function (response) {
-          resetForm();
-          console.log(response.data);
-          setTimeout(() => {
-            navigate("/customers/login");
-          }, 2000); // Adjust the delay as needed
-        })
-        .catch(function (error) {
-          console.error(error);
-        });
+  function elkuld()
+  {
+    axios({
+      method: "post",
+      url: "http://localhost/levi/php/sign-up.php",
+      data: {
+          email: document.getElementById("email").value,
+          password: document.getElementById("password").value,
       }
-    },
-  });
+      })
+      .then( function (response) {
+          setTimeout(() => {
+            navigate("/sign-in");
+          }, 2000);
+      })
+      .catch(function (error) {
+          console.log(error);
+      });
+  }
   return (
     <section className="m-8 flex">
             <div className="w-2/5 h-full hidden lg:block">
@@ -72,7 +47,7 @@ export function SignUp() {
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
               Your email
             </Typography>
-            <Input
+            <Input id="email"
               size="lg"
               placeholder="name@mail.com"
               className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
@@ -83,7 +58,7 @@ export function SignUp() {
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
               Password
             </Typography>
-            <Input
+            <Input id="password"
               type="password"
               size="lg"
               placeholder="password12345"
@@ -111,7 +86,7 @@ export function SignUp() {
             }
             containerProps={{ className: "-ml-2.5" }}
           />
-          <Button className="mt-6" fullWidth>
+          <Button className="mt-6" fullWidth onClick={elkuld}>
             Register Now
           </Button>
           <Typography variant="paragraph" className="text-center text-blue-gray-500 font-medium mt-4">
@@ -128,4 +103,3 @@ export function SignUp() {
 }
 
 export default SignUp;
-

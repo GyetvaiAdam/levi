@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2024. Dec 28. 20:49
+-- Létrehozás ideje: 2024. Dec 29. 14:11
 -- Kiszolgáló verziója: 10.4.32-MariaDB
 -- PHP verzió: 8.2.12
 
@@ -30,15 +30,24 @@ USE `16szemelyiseg`;
 --
 
 CREATE TABLE `felhasznalok` (
-  `user_id` int(11) NOT NULL,
   `user_email` varchar(255) NOT NULL,
-  `user_password` varchar(255) NOT NULL,
   `mind` double NOT NULL,
   `energy` double NOT NULL,
   `nature` double NOT NULL,
   `tactics` double NOT NULL,
   `identity` double NOT NULL,
   `mbti_type` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_hungarian_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Tábla szerkezet ehhez a táblához `felhasznalok_adatai`
+--
+
+CREATE TABLE `felhasznalok_adatai` (
+  `user_email` varchar(255) NOT NULL,
+  `user_password` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_hungarian_ci;
 
 -- --------------------------------------------------------
@@ -165,12 +174,6 @@ INSERT INTO `mbti` (`mbti_type`, `group`, `role`, `description`) VALUES
 --
 
 --
--- A tábla indexei `felhasznalok`
---
-ALTER TABLE `felhasznalok`
-  ADD PRIMARY KEY (`user_id`);
-
---
 -- A tábla indexei `kerdesek`
 --
 ALTER TABLE `kerdesek`
@@ -179,12 +182,6 @@ ALTER TABLE `kerdesek`
 --
 -- A kiírt táblák AUTO_INCREMENT értéke
 --
-
---
--- AUTO_INCREMENT a táblához `felhasznalok`
---
-ALTER TABLE `felhasznalok`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT a táblához `kerdesek`
