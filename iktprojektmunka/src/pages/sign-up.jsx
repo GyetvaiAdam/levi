@@ -12,10 +12,11 @@ export function SignUp() {
   const navigate = useNavigate();
   function elkuld()
   {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if(!regex.test(document.getElementById("email").value))
+    const emailregex = /[a-z0-9!#$%&'+/=?^_`{|}~-]+(?:.[a-z0-9!#$%&'+/=?^_`{|}~-]+)@(?:[a-z0-9](?:[a-z0-9-][a-z0-9])?.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g;
+    const passwordregex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm;
+    if(!emailregex.test(document.getElementById("email").value) || !passwordregex.test(document.getElementById("password").value))
     {
-      alert("Invalid email address");
+      alert("Invalid email address or password");
       return;
     }
     axios({
@@ -70,7 +71,7 @@ export function SignUp() {
               type="password"
               required
               size="lg"
-              placeholder="password12345"
+              placeholder="password1!"
               className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
               labelProps={{
                 className: "before:content-none after:content-none",

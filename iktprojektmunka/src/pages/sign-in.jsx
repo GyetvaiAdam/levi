@@ -89,10 +89,6 @@ export function SignIn() {
           </Button>
 
         </form>
-
-        <div className="mt-8 text-center">
-          <p>ide kene megcsinalni h mukodjenek a gombok sql lekredezes stb</p>
-        </div>
       </div>
       <div className="w-2/5 h-full hidden lg:block">
         <img
