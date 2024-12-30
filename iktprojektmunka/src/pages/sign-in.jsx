@@ -29,6 +29,7 @@ export function SignIn() {
         console.log(error);
       });
   }
+
   return (
     <section className="m-8 flex gap-4">
       <div className="w-full lg:w-3/5 mt-24">
@@ -42,6 +43,7 @@ export function SignIn() {
               Your email
             </Typography>
             <Input id="email"
+              required
               size="lg"
               placeholder="name@mail.com"
               className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
@@ -53,6 +55,7 @@ export function SignIn() {
               Password
             </Typography>
             <Input id="password"
+              required
               type="password"
               size="lg"
               placeholder="********"
@@ -63,6 +66,7 @@ export function SignIn() {
             />
           </div>
           <Checkbox
+            required
             label={
               <Typography
                 variant="small"

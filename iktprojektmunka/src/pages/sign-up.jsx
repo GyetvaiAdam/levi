@@ -12,6 +12,12 @@ export function SignUp() {
   const navigate = useNavigate();
   function elkuld()
   {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if(!regex.test(document.getElementById("email").value))
+    {
+      alert("Invalid email address");
+      return;
+    }
     axios({
       method: "post",
       url: "http://localhost/levi/php/sign-up.php",
@@ -29,6 +35,7 @@ export function SignUp() {
           console.log(error);
       });
   }
+  
   return (
     <section className="m-8 flex">
             <div className="w-2/5 h-full hidden lg:block">
@@ -48,6 +55,7 @@ export function SignUp() {
               Your email
             </Typography>
             <Input id="email"
+              required
               size="lg"
               placeholder="name@mail.com"
               className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
@@ -60,6 +68,7 @@ export function SignUp() {
             </Typography>
             <Input id="password"
               type="password"
+              required
               size="lg"
               placeholder="password12345"
               className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
@@ -69,6 +78,7 @@ export function SignUp() {
             />
           </div>
           <Checkbox
+            required
             label={
               <Typography
                 variant="small"
@@ -94,9 +104,6 @@ export function SignUp() {
             <Link to="/sign-in" className="text-gray-900 ml-1">Sign in</Link>
           </Typography>
         </form>
-      <div divclassName="mt-8 text-center">
-       ide kellene h ha beirja az emailt elkuldje sqlbe utanna kerje tole a jelszot azt is elkuldje sqlbe
-      </div>
       </div>
     </section>
   );

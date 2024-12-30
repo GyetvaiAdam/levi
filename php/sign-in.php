@@ -31,6 +31,5 @@
             "message" => "Invalid email or password.",
         ]);
     }
-
     mysqli_close($conn);
 ?>
