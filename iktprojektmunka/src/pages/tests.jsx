@@ -20,7 +20,7 @@ export function Profile() {
               <div className="relative flex gap-6 items-start">
                 <div className="-mt-20 w-40">
                   <Avatar
-                    src="/img/vg2ltkvnt8xd1.webp"
+                    src="/img/blank-profile-picture-973460_640.webp"
                     alt="Profile picture"
                     variant="circular"
                     className="h-full w-full"
@@ -28,9 +28,9 @@ export function Profile() {
                 </div>
                 <div className="flex flex-col mt-2">
                   <Typography variant="h4" color="blue-gray">
-                    Gooner
+                    User
                   </Typography>
-                  <Typography variant="paragraph" color="gray" className="!mt-0 font-normal">Gergencsik Levente</Typography>
+                  <Typography variant="paragraph" color="gray" className="!mt-0 font-normal">Ide az email címet Gyetva</Typography>
                 </div>
               </div>
 
@@ -58,7 +58,7 @@ export function Profile() {
             <div className="mb-10 py-6">
               <div className="flex w-full flex-col items-start lg:w-1/2">
                 <Typography className="mb-6 font-normal text-blue-gray-500">
-                  ide kene personality type v ha nincs a gomb h kitoltse a tesztet
+                  You have not taken any tests yet.
                 </Typography>
               </div>
             </div>

@@ -1,4 +1,5 @@
 import { Home, Profile, SignIn, SignUp } from "@/pages";
+import { Test } from "@/pages";
 
 export const routes = [
   {
@@ -27,6 +28,11 @@ export const routes = [
     target: "_blank",
     element: "",
   },
+  {
+    name: "The Test",
+    path: "/test",
+    element: <Test />,
+  }
 ];
 
 export default routes;

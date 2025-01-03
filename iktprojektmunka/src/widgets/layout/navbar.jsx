@@ -121,9 +121,11 @@ Navbar.defaultProps = {
       href="-"
       target="_blank"
     >
-      <Button variant="gradient" size="sm" fullWidth>
-       Take the test
-      </Button>
+      <Link to="/test">
+            <Button variant="gradient" size="sm" fullWidth>
+              Take the test
+            </Button>
+      </Link>
     </a>
   ),
 };
