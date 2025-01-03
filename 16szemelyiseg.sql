@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2024. Dec 29. 14:11
+-- Létrehozás ideje: 2025. Jan 03. 16:48
 -- Kiszolgáló verziója: 10.4.32-MariaDB
 -- PHP verzió: 8.2.12
 
@@ -48,6 +48,17 @@ CREATE TABLE `felhasznalok` (
 CREATE TABLE `felhasznalok_adatai` (
   `user_email` varchar(255) NOT NULL,
   `user_password` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_hungarian_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Tábla szerkezet ehhez a táblához `felhasznalo_eredmeny`
+--
+
+CREATE TABLE `felhasznalo_eredmeny` (
+  `user_email` varchar(255) NOT NULL,
+  `eredmeny` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_hungarian_ci;
 
 -- --------------------------------------------------------
