@@ -10,16 +10,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 $conn = mysqli_connect("localhost", "root", "", "16szemelyiseg");
-$question_id = $data["question_id"];
 
-$sql = "SELECT `question_text` FROM `kerdesek` WHERE `question_id` = '$question_id'";
+$sql = "SELECT `question_text` FROM `kerdesek`";
 $result = mysqli_query($conn, $sql);
 $row = mysqli_fetch_assoc($result);
-if($row){
 
-    echo json_encode($data);
-}else{
-    echo json_encode(["message" => "No records found"]);
+$array = [];
+if ($result) {
+    while ($row = mysqli_fetch_assoc($result)) {
+        $array[] = $row['question_text'];
+    }
+}
+
+if (!empty($array)) {
+    echo json_encode($array);
+} else {
+    echo json_encode([]);
 }
 
 mysqli_close($conn);
