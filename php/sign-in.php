@@ -1,35 +1,55 @@
 <?php
-    header("Access-Control-Allow-Origin: *");
-    header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
-    header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 
-    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-        http_response_code(200);
-        exit();
-    }
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
 
-    $rawData = file_get_contents("php://input");
-    $data = json_decode($rawData, true);
+$rawData = file_get_contents("php://input");
+$data = json_decode($rawData, true);
 
-    $conn = mysqli_connect("localhost", "root", "", "16szemelyiseg");
-    $email = $data["email"];
-    $password = $data["password"];
+if (empty($data["email"]) || empty($data["password"])) {
+    http_response_code(400);
+    echo json_encode([
+        "status" => "error",
+        "message" => "Email and password are required.",
+    ]);
+    exit();
+}
 
-    $sql = "SELECT `user_password` FROM `felhasznalok_adatai` WHERE `user_email` = '$email'";
-    $result = mysqli_query($conn, $sql);
-    $row = mysqli_fetch_assoc($result);
+$conn = new mysqli("localhost", "root", "", "16szemelyiseg");
 
-    if ($row && password_verify($password, $row['user_password'])) {
-        echo json_encode([
-            "status" => "success",
-            "message" => "Login successful.",
-            "email" => $email,
-        ]);
-    } else {
-        echo json_encode([
-            "status" => "error",
-            "message" => "Invalid email or password.",
-        ]);
-    }
-    mysqli_close($conn);
+if ($conn->connect_error) {
+    http_response_code(500);
+    echo json_encode([
+        "status" => "error",
+        "message" => "Failed to connect to the database.",
+    ]);
+    exit();
+}
+
+$email = $data["email"];
+$password = password_hash($data["password"], PASSWORD_BCRYPT);
+
+$stmt = $conn->prepare("INSERT INTO `felhasznalok_adatai` (`user_email`, `user_password`) VALUES (?, ?)");
+$stmt->bind_param("ss", $email, $password);
+
+if ($stmt->execute()) {
+    echo json_encode([
+        "status" => "success",
+        "message" => "User registered successfully.",
+    ]);
+} else {
+    http_response_code(500);
+    echo json_encode([
+        "status" => "error",
+        "message" => "Failed to register user.",
+    ]);
+}
+
+$stmt->close();
+$conn->close();
 ?>

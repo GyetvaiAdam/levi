@@ -1,12 +1,36 @@
-import { Avatar, Typography } from "@material-tailwind/react";
-import {
-  MapPinIcon,
-  BriefcaseIcon,
-  BuildingLibraryIcon,//ide mast majd
-} from "@heroicons/react/24/solid";
+import React, { useEffect, useState } from "react";
+import { Avatar, Typography, Card, CardBody } from "@material-tailwind/react";
+import axios from "axios";
 import { Footer } from "@/widgets/layout";
 
 export function Profile() {
+  const [userEmail, setUserEmail] = useState("");
+  const [mbtiDetails, setMbtiDetails] = useState(null);
+  const [testCount, setTestCount] = useState(0);
+
+  useEffect(() => {
+    const email = localStorage.getItem("userEmail");
+    setUserEmail(email);
+
+    const count = parseInt(localStorage.getItem("testCount") || "0", 10);
+    setTestCount(count);
+
+    if (count > 0 && email) {
+      axios({
+        method: "get",
+        url: "http://localhost/levi/php/get_mbti.php",
+        params: { email }, // Use params for GET requests
+      })
+        .then((response) => {
+          setMbtiDetails(response.data);
+          console.log("MBTI details:", response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching MBTI details:", error.response);
+        });
+    }
+  }, []);
+
   return (
     <>
       <section className="relative block h-[50vh]">
@@ -28,9 +52,8 @@ export function Profile() {
                 </div>
                 <div className="flex flex-col mt-2">
                   <Typography variant="h4" color="blue-gray">
-                    User
+                    {userEmail || "Sign-in!"}
                   </Typography>
-                  <Typography variant="paragraph" color="gray" className="!mt-0 font-normal">Ide az email címet Gyetva</Typography>
                 </div>
               </div>
 
@@ -42,7 +65,7 @@ export function Profile() {
                       color="blue-gray"
                       className="font-bold uppercase"
                     >
-                      0
+                      {testCount}
                     </Typography>
                     <Typography
                       variant="small"
@@ -52,25 +75,52 @@ export function Profile() {
                     </Typography>
                   </div>
                 </div>
-
               </div>
             </div>
+
             <div className="mb-10 py-6">
               <div className="flex w-full flex-col items-start lg:w-1/2">
-                <Typography className="mb-6 font-normal text-blue-gray-500">
-                  You have not taken any tests yet.
-                </Typography>
+                {testCount === 0 ? (
+                  <Typography className="mb-6 font-normal text-blue-gray-500">
+                    You have not taken any tests yet.
+                  </Typography>
+                ) : mbtiDetails ? (
+                  <Card className="w-full shadow-lg">
+                    <CardBody className="p-6">
+                      <Typography
+                        variant="h4"
+                        color="blue-gray"
+                        className="font-semibold mb-4"
+                      >
+                        Your MBTI Results
+                      </Typography>
+                      <Typography color="gray" className="mb-2">
+                        <strong>Type:</strong> {mbtiDetails.type}
+                      </Typography>
+                      <Typography color="gray" className="mb-2">
+                        <strong>Group:</strong> {mbtiDetails.group}
+                      </Typography>
+                      <Typography color="gray" className="mb-2">
+                        <strong>Role:</strong> {mbtiDetails.role}
+                      </Typography>
+                      <Typography color="gray">
+                        <strong>Description:</strong> {mbtiDetails.description}
+                      </Typography>
+                    </CardBody>
+                  </Card>
+                ) : (
+                  <Typography className="mb-6 font-normal text-blue-gray-500">
+                    Loading your results...
+                  </Typography>
+                )}
               </div>
             </div>
           </div>
-
-
         </div>
       </section>
       <div className="bg-white">
         <Footer />
       </div>
-
     </>
   );
 }

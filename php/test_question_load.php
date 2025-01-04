@@ -6,26 +6,23 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-W
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
-
 }
 
 $conn = mysqli_connect("localhost", "root", "", "16szemelyiseg");
 
-$sql = "SELECT `question_text` FROM `kerdesek`";
+$sql = "SELECT `question_text`, `dimension` FROM `kerdesek`";
 $result = mysqli_query($conn, $sql);
-$row = mysqli_fetch_assoc($result);
 
-$array = [];
+$questions = [];
+$dimensions = [];
 if ($result) {
     while ($row = mysqli_fetch_assoc($result)) {
-        $array[] = $row['question_text'];
+        $questions[] = $row['question_text'];
+        $dimensions[] = $row['dimension'];
     }
-}
-
-if (!empty($array)) {
-    echo json_encode($array);
+    echo json_encode(['questions' => $questions, 'dimensions' => $dimensions]);
 } else {
-    echo json_encode([]);
+    echo json_encode(['questions' => [], 'dimensions' => []]);
 }
 
 mysqli_close($conn);

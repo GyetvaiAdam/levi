@@ -3,16 +3,19 @@ import { Typography, Card, CardBody, Radio, Button } from "@material-tailwind/re
 import axios from "axios";
 
 export function Test() {
-  const [questions, setQuestions] = useState([]); // Questions fetched from the backend
-  const [responses, setResponses] = useState({}); // User responses
+  const [questions, setQuestions] = useState([]);
+  const [dimension, setDimension] = useState([]);
+  const [responses, setResponses] = useState({});
+  const [userEmail, setUserEmail] = useState('');
+  const [testCount, setTestCount] = useState(0);
 
-  // Fetch questions from the backend
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
         const response = await axios.get("http://localhost/levi/php/test_question_load.php");
-        if (response.data && Array.isArray(response.data)) {
-          setQuestions(response.data);
+        if (response.data && Array.isArray(response.data.questions) && Array.isArray(response.data.dimensions)) {
+          setQuestions(response.data.questions);
+          setDimension(response.data.dimensions);
         } else {
           console.error("Unexpected response format:", response.data);
         }
@@ -24,20 +27,37 @@ export function Test() {
     fetchQuestions();
   }, []);
 
-  // Handle radio button change
+  useEffect(() => {
+    const email = localStorage.getItem('userEmail');
+    setUserEmail(email);
+
+
+    const count = parseInt(localStorage.getItem('testCount') || '0', 10);
+    const stringcount = count.toString();
+    setTestCount(stringcount);
+  }, []);
+
   const handleResponseChange = (questionIndex, value) => {
+
     setResponses((prevResponses) => ({
       ...prevResponses,
-      [questionIndex]: value,
+      [questionIndex]: { value: value, dimension: dimension[questionIndex] },
     }));
+
+    const newCount = testCount + 1;
+    setTestCount(newCount);
+    localStorage.setItem('testCount', newCount.toString());
   };
 
-  // Submit responses to the backend
   const handleSubmit = async () => {
     try {
+      const email = localStorage.getItem("userEmail"); // Get email from localStorage
+      console.log("Sending responses:", responses); // Log the responses
       const response = await axios.post("http://localhost/levi/php/test_result.php", {
         responses,
+        email: email // Include email in the request
       });
+      console.log("Response from server:", response.data); // Log the server response
       if (response.data.success) {
         alert("Responses saved successfully!");
       } else {
@@ -67,15 +87,14 @@ export function Test() {
                 </Typography>
                 <div className="flex justify-between w-full mx-4">
                   {Array.from({ length: 7 }, (_, i) => {
-                    const size = 32 + Math.abs(3 - i) * 6;
+                    const value = -3 + i;
                     return (
                       <Radio
                         key={i}
-                        id={`question-${index + 1}-answer-${i + 1}`}
+                        id={`question-${index + 1}-answer-${value}`}
                         name={`question-${index}`}
-                        value={i + 1}
-                        style={{ width: size, height: size }}
-                        onChange={() => handleResponseChange(index, i + 1)}
+                        value={value}
+                        onChange={() => handleResponseChange(index, value)}
                       />
                     );
                   })}

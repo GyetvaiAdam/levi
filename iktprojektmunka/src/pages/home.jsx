@@ -16,6 +16,7 @@ import { FeatureCard, TeamCard } from "@/widgets/cards";
 import { featuresData, teamData, contactData } from "@/data";
 
 export function Home() {
+  const userEmail = localStorage.getItem('userEmail');
   return (
     <>
       <div className="relative flex h-screen content-center items-center justify-center pt-16 pb-32">
