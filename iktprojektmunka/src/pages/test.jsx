@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Typography, Card, CardBody, Radio, Button } from "@material-tailwind/react";
 import axios from "axios";
+import initcounter from "./initcount.js";
+import initemail from "./init.js";
 
 export function Test() {
   const [questions, setQuestions] = useState([]);
@@ -8,6 +10,7 @@ export function Test() {
   const [responses, setResponses] = useState({});
   const [userEmail, setUserEmail] = useState('');
   const [testCount, setTestCount] = useState(0);
+
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -27,37 +30,36 @@ export function Test() {
     fetchQuestions();
   }, []);
 
+
   useEffect(() => {
-    const email = localStorage.getItem('userEmail');
-    setUserEmail(email);
-
-
-    const count = parseInt(localStorage.getItem('testCount') || '0', 10);
-    const stringcount = count.toString();
-    setTestCount(stringcount);
+    if (initemail && initemail.email) {
+      setUserEmail(initemail.email);
+    } else {
+      console.error("User didn't sign in!");
+      alert("User didn't sign in!");
+    }
+    const count = parseInt(initcounter, 10) || 0;
+    Object.freeze(setTestCount(initcounter.count = count));   
+    
   }, []);
 
   const handleResponseChange = (questionIndex, value) => {
-
     setResponses((prevResponses) => ({
       ...prevResponses,
       [questionIndex]: { value: value, dimension: dimension[questionIndex] },
     }));
 
-    const newCount = testCount + 1;
-    setTestCount(newCount);
-    localStorage.setItem('testCount', newCount.toString());
+    setTestCount((prevCount) => prevCount + 1);
   };
 
   const handleSubmit = async () => {
     try {
-      const email = localStorage.getItem("userEmail"); // Get email from localStorage
-      console.log("Sending responses:", responses); // Log the responses
+      console.log("Sending responses:", responses);
       const response = await axios.post("http://localhost/levi/php/test_result.php", {
         responses,
-        email: email // Include email in the request
+        email: userEmail,
       });
-      console.log("Response from server:", response.data); // Log the server response
+      console.log("Response from server:", response.data);
       if (response.data.success) {
         alert("Responses saved successfully!");
       } else {

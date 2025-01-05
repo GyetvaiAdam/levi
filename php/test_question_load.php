@@ -20,9 +20,15 @@ if ($result) {
         $questions[] = $row['question_text'];
         $dimensions[] = $row['dimension'];
     }
-    echo json_encode(['questions' => $questions, 'dimensions' => $dimensions]);
+    echo json_encode([
+        'questions' => $questions, 
+        'dimensions' => $dimensions
+    ]);
 } else {
-    echo json_encode(['questions' => [], 'dimensions' => []]);
+    echo json_encode([
+        'questions' => [], 
+        'dimensions' => []
+    ]);
 }
 
 mysqli_close($conn);

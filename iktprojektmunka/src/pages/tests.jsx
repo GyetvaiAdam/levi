@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Avatar, Typography, Card, CardBody } from "@material-tailwind/react";
 import axios from "axios";
 import { Footer } from "@/widgets/layout";
+import Initemail from './init.js';
+import initcounter from "./initcount.js";
 
 export function Profile() {
   const [userEmail, setUserEmail] = useState("");
@@ -9,17 +11,17 @@ export function Profile() {
   const [testCount, setTestCount] = useState(0);
 
   useEffect(() => {
-    const email = localStorage.getItem("userEmail");
+    const email = Initemail.email;
     setUserEmail(email);
 
-    const count = parseInt(localStorage.getItem("testCount") || "0", 10);
+    const count = initcounter || "0";
     setTestCount(count);
 
     if (count > 0 && email) {
       axios({
         method: "get",
         url: "http://localhost/levi/php/get_mbti.php",
-        params: { email }, // Use params for GET requests
+        params: { email },
       })
         .then((response) => {
           setMbtiDetails(response.data);
@@ -82,7 +84,7 @@ export function Profile() {
               <div className="flex w-full flex-col items-start lg:w-1/2">
                 {testCount === 0 ? (
                   <Typography className="mb-6 font-normal text-blue-gray-500">
-                    You have not taken any tests yet.
+                    Loading your results...
                   </Typography>
                 ) : mbtiDetails ? (
                   <Card className="w-full shadow-lg">
@@ -110,7 +112,7 @@ export function Profile() {
                   </Card>
                 ) : (
                   <Typography className="mb-6 font-normal text-blue-gray-500">
-                    Loading your results...
+                    Sign-in to see your results!
                   </Typography>
                 )}
               </div>

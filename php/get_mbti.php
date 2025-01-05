@@ -4,13 +4,11 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET');
 header('Access-Control-Allow-Headers: Content-Type');
 
-// Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
 }
 
-// Database connection
 $conn = mysqli_connect("localhost", "root", "", "16szemelyiseg");
 
 if (!$conn) {
@@ -18,7 +16,6 @@ if (!$conn) {
     exit();
 }
 
-// Get user email from the request (ensure it's securely passed via the query string)
 $email = isset($_GET['email']) ? $_GET['email'] : null;
 
 if (!$email) {
@@ -26,8 +23,7 @@ if (!$email) {
     exit();
 }
 
-// Fetch MBTI type for the user
-$sql = "SELECT `mbti_type` FROM `felhasznalok` WHERE `user_email` = ?";
+$sql = "SELECT `mbti_type` FROM `felhasznalok` WHERE `user_email` = $email";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param('s', $email);
 $stmt->execute();
@@ -41,7 +37,6 @@ if ($result->num_rows === 0) {
 $row = $result->fetch_assoc();
 $mbti_type = $row['mbti_type'];
 
-// Fetch details from the mbti table
 $sql = "SELECT `group`, `role`, `description` FROM `mbti` WHERE `mbti_type` LIKE ?";
 $stmt = $conn->prepare($sql);
 $mbti_query = $mbti_type . '%';
@@ -61,6 +56,5 @@ if ($result->num_rows > 0) {
     echo json_encode(['error' => 'No MBTI details found for the given type']);
 }
 
-// Close the database connection
 mysqli_close($conn);
 ?>
