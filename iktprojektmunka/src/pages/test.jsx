@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Typography, Card, CardBody, Radio, Button } from "@material-tailwind/react";
 import axios from "axios";
 import initcounter from "./initcount.js";
-import initemail from "./init.js";
+import initemail from "./initemail.js";
 
 export function Test() {
   const [questions, setQuestions] = useState([]);

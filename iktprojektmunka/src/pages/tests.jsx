@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Avatar, Typography, Card, CardBody } from "@material-tailwind/react";
 import axios from "axios";
 import { Footer } from "@/widgets/layout";
-import Initemail from './init.js';
+import Initemail from './initemail.js';
 import initcounter from "./initcount.js";
 
 export function Profile() {
@@ -11,8 +11,7 @@ export function Profile() {
   const [testCount, setTestCount] = useState(0);
 
   useEffect(() => {
-    const email = Initemail.email;
-    setUserEmail(email);
+    setUserEmail(Initemail.email);
 
     const count = initcounter || "0";
     setTestCount(count);

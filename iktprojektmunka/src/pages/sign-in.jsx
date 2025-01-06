@@ -1,7 +1,7 @@
 import { Input, Checkbox, Button, Typography } from "@material-tailwind/react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import initemail from './init.js';
+import Initemail from './initemail.js';
 
 export function SignIn() {
   const navigate = useNavigate();
@@ -9,23 +9,23 @@ export function SignIn() {
   {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
-
+    Initemail.email = email;
     axios({
       method: "post",
       url: "http://localhost/levi/php/sign-in.php",
       data: {email,password}
       })
       .then( function () {
-        initemail.email = email;
-        Object.freeze(initemail);
+
           setTimeout(() => {
             navigate("/home");
           }, 2);
       })
-      .catch(function (error) {
-          console.log(error);
-          alert("Email and password are required.")
-      });
+      .catch(function (r) {
+        alert("email or password incorrect or must be filled.");   
+    });
+
+
   }
 
   return (

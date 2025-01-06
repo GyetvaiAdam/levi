@@ -19,18 +19,20 @@
         ]);
         http_response_code(400);
         exit();
-    }
-
-    $conn = mysqli_connect("localhost", "root", "", "16szemelyiseg");
-    $email = $data["email"];
-    $password = password_hash($data["password"], PASSWORD_BCRYPT);
-    $sql = "INSERT INTO `felhasznalok_adatai`(`user_email`, `user_password`) VALUES ('$email','$password')";
-    mysqli_query($conn, $sql);
-    echo json_encode([
+    }else{
+        $conn = mysqli_connect("localhost", "root", "", "16szemelyiseg");
+        $email = $data["email"];
+        $password = password_hash($data["password"], PASSWORD_BCRYPT);
+        $sql = "INSERT INTO `felhasznalok_adatai`(`user_email`, `user_password`) VALUES ('$email','$password')";
+        mysqli_query($conn, $sql);
+        echo json_encode([
         "status" => "success",
         "message" => "Data received successfully.",
         "email" => $email,
     ]);
+    }
+
+    
 
     mysqli_close($conn);
 ?>
