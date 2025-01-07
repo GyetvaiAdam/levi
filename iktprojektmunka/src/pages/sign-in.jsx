@@ -9,14 +9,13 @@ export function SignIn() {
   {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
-    Initemail.email = email;
+    Initemail.email = document.getElementById("email").value;
     axios({
       method: "post",
       url: "http://localhost/levi/php/sign-in.php",
       data: {email,password}
       })
       .then( function () {
-
           setTimeout(() => {
             navigate("/home");
           }, 2);

@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Typography, Card, CardBody, Radio, Button } from "@material-tailwind/react";
 import axios from "axios";
-import initcounter from "./initcount.js";
+import { useNavigate } from "react-router-dom";
 import initemail from "./initemail.js";
 
 export function Test() {
   const [questions, setQuestions] = useState([]);
   const [dimension, setDimension] = useState([]);
   const [responses, setResponses] = useState({});
-  const [userEmail, setUserEmail] = useState('');
-  const [testCount, setTestCount] = useState(0);
-
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -30,46 +28,38 @@ export function Test() {
     fetchQuestions();
   }, []);
 
-
-  useEffect(() => {
-    if (initemail && initemail.email) {
-      setUserEmail(initemail.email);
-    } else {
-      console.error("User didn't sign in!");
-      alert("User didn't sign in!");
-    }
-    const count = parseInt(initcounter, 10) || 0;
-    Object.freeze(setTestCount(initcounter.count = count));   
-    
-  }, []);
-
   const handleResponseChange = (questionIndex, value) => {
     setResponses((prevResponses) => ({
       ...prevResponses,
       [questionIndex]: { value: value, dimension: dimension[questionIndex] },
     }));
-
-    setTestCount((prevCount) => prevCount + 1);
   };
 
-  const handleSubmit = async () => {
-    try {
-      console.log("Sending responses:", responses);
-      const response = await axios.post("http://localhost/levi/php/test_result.php", {
-        responses,
-        email: userEmail,
+  const handleUpdateAndSubmit = (responses, initemail) => {
+    axios
+      .post("http://localhost/levi/php/count.php", { email: initemail.email })
+      .then(() => {
+        return axios.post("http://localhost/levi/php/test_result.php", {
+          responses,
+          email: initemail.email,
+        });
+      })
+      .then((submitResponse) => {
+        console.log("Response from server:", submitResponse.data);
+  
+        if (submitResponse.data.success) {
+          alert("Responses saved successfully!");
+          navigate("/home");
+        } else {
+          alert("Failed to save responses.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error occurred:", error);
+        alert("An error occurred during the process. Please try again.");
       });
-      console.log("Response from server:", response.data);
-      if (response.data.success) {
-        alert("Responses saved successfully!");
-      } else {
-        alert("Failed to save responses.");
-      }
-    } catch (error) {
-      console.error("Error saving responses:", error);
-      alert("An error occurred while saving your responses.");
-    }
   };
+  
 
   return (
     <div className="container mx-auto p-4">
@@ -114,7 +104,7 @@ export function Test() {
         </Typography>
       )}
       <div className="flex justify-center mt-8">
-        <Button variant="filled" color="light-green" onClick={handleSubmit}>
+        <Button variant="filled" color="light-green" onClick={() => handleUpdateAndSubmit(responses, initemail)}>
           Send
         </Button>
       </div>

@@ -2,25 +2,20 @@ import React, { useEffect, useState } from "react";
 import { Avatar, Typography, Card, CardBody } from "@material-tailwind/react";
 import axios from "axios";
 import { Footer } from "@/widgets/layout";
-import Initemail from './initemail.js';
-import initcounter from "./initcount.js";
+import Initemail from "./initemail.js";
 
 export function Profile() {
-  const [userEmail, setUserEmail] = useState("");
   const [mbtiDetails, setMbtiDetails] = useState(null);
-  const [testCount, setTestCount] = useState(0);
+  const [userEmail, setUserEmail] = useState(Initemail.email || "Sign-in!");
+  const [userCounts, setUserCounts] = useState(0);
 
+  // Fetch MBTI details
   useEffect(() => {
-    setUserEmail(Initemail.email);
-
-    const count = initcounter || "0";
-    setTestCount(count);
-
-    if (count > 0 && email) {
+    if (userEmail !== "Sign-in!") {
       axios({
         method: "get",
         url: "http://localhost/levi/php/get_mbti.php",
-        params: { email },
+        params: { email: userEmail },
       })
         .then((response) => {
           setMbtiDetails(response.data);
@@ -30,7 +25,28 @@ export function Profile() {
           console.error("Error fetching MBTI details:", error.response);
         });
     }
-  }, []);
+  }, [userEmail]);
+
+  useEffect(() => {
+    if (userEmail !== "Sign-in!") {
+      axios({
+        method: "post",
+        url: "http://localhost/levi/php/submitcount.php",
+        data: { email: userEmail },
+      })
+        .then((response) => {
+          if (response.data && response.data.count !== undefined) {
+            setUserCounts(response.data.count);
+          } else {
+            console.error("Unexpected response:", response.data);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching user counts:", error);
+        });
+    }
+  }, [userEmail]);
+  
 
   return (
     <>
@@ -53,7 +69,7 @@ export function Profile() {
                 </div>
                 <div className="flex flex-col mt-2">
                   <Typography variant="h4" color="blue-gray">
-                    {userEmail || "Sign-in!"}
+                    {userEmail}
                   </Typography>
                 </div>
               </div>
@@ -66,7 +82,7 @@ export function Profile() {
                       color="blue-gray"
                       className="font-bold uppercase"
                     >
-                      {testCount}
+                      {userCounts}
                     </Typography>
                     <Typography
                       variant="small"
@@ -81,11 +97,7 @@ export function Profile() {
 
             <div className="mb-10 py-6">
               <div className="flex w-full flex-col items-start lg:w-1/2">
-                {testCount === 0 ? (
-                  <Typography className="mb-6 font-normal text-blue-gray-500">
-                    Loading your results...
-                  </Typography>
-                ) : mbtiDetails ? (
+                {mbtiDetails ? (
                   <Card className="w-full shadow-lg">
                     <CardBody className="p-6">
                       <Typography
@@ -110,8 +122,8 @@ export function Profile() {
                     </CardBody>
                   </Card>
                 ) : (
-                  <Typography className="mb-6 font-normal text-blue-gray-500">
-                    Sign-in to see your results!
+                  <Typography color="gray" className="text-center">
+                    Sign in!
                   </Typography>
                 )}
               </div>

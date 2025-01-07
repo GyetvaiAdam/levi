@@ -23,29 +23,44 @@ if (!$email) {
     exit();
 }
 
-$sql = "SELECT `mbti_type` FROM `felhasznalok` WHERE `user_email` = $email";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param('s', $email);
-$stmt->execute();
-$result = $stmt->get_result();
+$sql1 = "SELECT `mbti_type` FROM `felhasznalok` WHERE `user_email` = ?";
+$stmt1 = $conn->prepare($sql1);
 
-if ($result->num_rows === 0) {
-    echo json_encode(['error' => 'No user found with the given email']);
+if (!$stmt1) {
+    echo json_encode(['error' => 'Failed to prepare the SQL query']);
     exit();
 }
 
-$row = $result->fetch_assoc();
-$mbti_type = $row['mbti_type'];
+$stmt1->bind_param('s', $email);
+$stmt1->execute();
+$result1 = $stmt1->get_result();
 
-$sql = "SELECT `group`, `role`, `description` FROM `mbti` WHERE `mbti_type` LIKE ?";
-$stmt = $conn->prepare($sql);
+if ($result1->num_rows === 0) {
+    echo json_encode(['error' => 'No user found with the given email']);
+    $stmt1->close();
+    mysqli_close($conn);
+    exit();
+}
+
+$row1 = $result1->fetch_assoc();
+$mbti_type = $row1['mbti_type'];
+$stmt1->close();
+
+$sql2 = "SELECT `group`, `role`, `description` FROM `mbti` WHERE `mbti_type` LIKE ?";
+$stmt2 = $conn->prepare($sql2);
+
+if (!$stmt2) {
+    echo json_encode(['error' => 'Failed to prepare the second SQL query']);
+    exit();
+}
+
 $mbti_query = $mbti_type . '%';
-$stmt->bind_param('s', $mbti_query);
-$stmt->execute();
-$result = $stmt->get_result();
+$stmt2->bind_param('s', $mbti_query);
+$stmt2->execute();
+$result2 = $stmt2->get_result();
 
-if ($result->num_rows > 0) {
-    $mbti_details = $result->fetch_assoc();
+if ($result2->num_rows > 0) {
+    $mbti_details = $result2->fetch_assoc();
     echo json_encode([
         'type' => $mbti_type,
         'group' => $mbti_details['group'],
@@ -56,5 +71,6 @@ if ($result->num_rows > 0) {
     echo json_encode(['error' => 'No MBTI details found for the given type']);
 }
 
+$stmt2->close();
 mysqli_close($conn);
 ?>

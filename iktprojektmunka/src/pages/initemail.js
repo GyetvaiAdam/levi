@@ -1,2 +1,2 @@
-const Initemail = {};
+const Initemail = {email:""};
 export default Initemail;

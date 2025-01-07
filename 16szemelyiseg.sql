@@ -31,12 +31,8 @@ USE `16szemelyiseg`;
 
 CREATE TABLE `felhasznalok` (
   `user_email` varchar(255) NOT NULL,
-  `mind` double NOT NULL,
-  `energy` double NOT NULL,
-  `nature` double NOT NULL,
-  `tactics` double NOT NULL,
-  `identity` double NOT NULL,
-  `mbti_type` varchar(50) NOT NULL
+  `mbti_type` varchar(50) NOT NULL,
+  `test_count` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_hungarian_ci;
 
 -- --------------------------------------------------------
